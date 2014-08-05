@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -25,7 +26,7 @@ namespace BuyListCreator
         private void Form1_Load(object sender, EventArgs e)
         {
             //TODO:本番ではコメントアウトを取る
-            //txtFilePath.Text = Path.GetDirectoryName(Application.ExecutablePath);
+            txtFilePath.Text = Path.GetDirectoryName(Application.ExecutablePath);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -45,7 +46,9 @@ namespace BuyListCreator
             
             // EndUpdate時にをまとめて描画
             listViewResult.BeginUpdate();
-            
+
+            txtResult.Text += dtpCalendar.Text + Environment.NewLine;
+
             for (int i = 0; i < chxSystems.Items.Count; i++)
             {
                 // チェックオフの場合、次へ
@@ -61,12 +64,18 @@ namespace BuyListCreator
                 //orderList = db.ExecuteSql<DOrder>(sql, -1);
                 orderList = db._conn.Query<DOrder>(sql);
 
+                Markets mks = new Markets();
 
                 for (int j = 0; j < orderList.ToList<DOrder>().Count(); j++)
                 {
+                    if (j == 0)
+                    {
+                        txtResult.Text += Environment.NewLine + systemId[0].Trim() + Environment.NewLine;
+                    }
+
                     DOrder dorder = orderList.ToList<DOrder>()[j];
                     
-                    // 「買い」のみ編集する
+                    // 「売り」は飛ばす
                     if (dorder.OrderType == 1) continue;
 
                     // リストビューを編集
@@ -77,23 +86,27 @@ namespace BuyListCreator
                         dorder.BrandNM,
                         dorder.Price.ToString("#,0"),
                         dorder.OrderNumber.ToString("#,0"),
-                        dorder.OrderType == 1 ? "買い" : "売り"
+                        dorder.OrderType == 0 ? "買" : "売"
                     });
 
                     //ListViewItem.ListViewSubItem lvsi = new ListViewItem.ListViewSubItem();
                     
                     listViewResult.Items.Add(lvi);
 
+                    // 対象の市場名がまだ表示されていない場合
+                    if (!mks.hasDisplayed[dorder.MarketId])
+                    {
+                        mks.hasDisplayed[dorder.MarketId] = true;
+                        txtResult.Text += dorder.MarketNM + Environment.NewLine;
+                    }
+
                     // テキストボックスを編集
-                    txtResult.Text += systemId[0].Trim() + "\r\n"
-                                    + dorder.MarketNM + "\r\n"
-                                    + dorder.OrderDate.ToString("yy/MM/dd")
-                                    + "," + dorder.Code.ToString()
+                    txtResult.Text += dorder.Code.ToString()
                                     + "," + dorder.BrandNM
                                     + "," + dorder.Price.ToString()
                                     + "," + dorder.OrderNumber.ToString()
-                                    + "," + (dorder.OrderType == 1 ? "買い" : "売り")
-                                    + "\r\n";
+                                    + "," + (dorder.OrderType == 0 ? "買" : "売")
+                                    + Environment.NewLine;
 
                 }
             }
@@ -192,6 +205,8 @@ namespace BuyListCreator
             sql += " WHERE @File = " + "\"" + filename + ".pt\"";
             sql += " AND @Date = " + "#" + date + "#";
             sql += " AND @Order = 0";
+            sql += " ORDER BY @FIle, Market.@Id";
+
             return sql;
         }
 
@@ -218,6 +233,31 @@ namespace BuyListCreator
             {
                 chxSystems.SetItemChecked(i, false);
             }
+        }
+
+        /// <summary>
+        /// [Result]テキストボックスでキーダウン時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtResult_KeyDown(object sender, KeyEventArgs e)
+        {
+            // [Ctrl+a]でテキストを全選択する
+            if (e.Control && e.KeyCode == Keys.A)
+            {
+                txtResult.SelectAll();
+            }
+        }
+    }
+
+    public class Markets
+    {
+        public List<Boolean> hasDisplayed;
+
+        public Markets()
+        {
+            bool[] dis = new bool[11];
+            hasDisplayed = new List<Boolean>(dis);
         }
     }
 }

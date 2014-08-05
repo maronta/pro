@@ -115,8 +115,10 @@
             this.txtResult.Location = new System.Drawing.Point(310, 12);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
+            this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtResult.Size = new System.Drawing.Size(404, 121);
             this.txtResult.TabIndex = 6;
+            this.txtResult.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtResult_KeyDown);
             // 
             // btnAllCheckOn
             // 
