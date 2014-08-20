@@ -209,7 +209,7 @@
             this.Controls.Add(this.btnExec);
             this.Controls.Add(this.dtpCalendar);
             this.Name = "Form1";
-            this.Text = "BuyListCreator";
+            this.Text = "BuyListCreator ver1.0";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

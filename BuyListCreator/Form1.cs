@@ -25,6 +25,7 @@ namespace BuyListCreator
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            listViewResult.Items.Clear();
             //TODO:本番ではコメントアウトを取る
             txtFilePath.Text = Path.GetDirectoryName(Application.ExecutablePath);
         }
@@ -123,25 +124,6 @@ namespace BuyListCreator
         /// <param name="e"></param>
         private void btnGetSystem_Click(object sender, EventArgs e)
         {
-            //AccessMdb db = new AccessMdb();
-            //DataTable tb;
-            //// DBに接続できない場合
-            //if (!db.Connect(txtFilePath.Text + @"\protra.mdb", -1))
-            //{
-            //    MessageBox.Show("DBに接続できません");
-            //    return;
-            //}
-            
-            //tb = db.ExecuteSql("select * from System ORDER BY @File ASC", -1);
-
-            //for (int i = 0; i < tb.Rows.Count; i++)
-            //{
-            //    chxSystems.Items.Add(tb.Rows[i]["@Id"].ToString().PadLeft(3)
-            //        + ":" + tb.Rows[i]["@File"].ToString(), true);
-            //}
-            
-            //db.Disconnect();
-
             chxSystems.Items.Clear();
             String strDirPath = txtFilePath.Text + "\\system";
 
@@ -164,16 +146,6 @@ namespace BuyListCreator
         /// <param name="e"></param>
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            //OpenFileDialog ofd = new OpenFileDialog();
-            ////ofd.FileName = "data.mdb";
-            
-            //// ダイアログを表示する
-            //if (ofd.ShowDialog() == DialogResult.OK)
-            //{
-            //    // OKボタンがクリックされた時
-            //    txtFilePath.Text = ofd.FileName;
-            //}
-
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             //上部に表示する説明テキストを指定する
             fbd.Description = "フォルダを指定してください。";
